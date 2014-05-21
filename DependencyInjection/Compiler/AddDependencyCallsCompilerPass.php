@@ -70,11 +70,13 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
 
                 $resolvedGroupName = isset($attributes['group']) ? $parameterBag->resolveValue($attributes['group']) : 'default';
                 $labelCatalogue = isset($attributes['label_catalogue']) ? $attributes['label_catalogue'] : 'SonataAdminBundle';
+                $icon = isset($attributes['icon']) ? $attributes['icon'] : '<i class="fa fa-folder"></i>';
 
                 if (!isset($groupDefaults[$resolvedGroupName])) {
                     $groupDefaults[$resolvedGroupName] = array(
                         'label'           => $resolvedGroupName,
                         'label_catalogue' => $labelCatalogue,
+                        'icon' => $icon,
                         'roles' => array()
                     );
                 }
@@ -107,6 +109,10 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
 
                 if (empty($group['label_catalogue'])) {
                     $groups[$resolvedGroupName]['label_catalogue'] = 'SonataAdminBundle';
+                }
+
+                if (empty($group['icon'])) {
+                    $groups[$resolvedGroupName]['icon'] = $groupDefaults[$resolvedGroupName]['icon'];
                 }
 
                 if (!empty($group['item_adds'])) {
@@ -275,6 +281,7 @@ class AddDependencyCallsCompilerPass implements CompilerPassInterface
             'ajax'                     => 'SonataAdminBundle::ajax_layout.html.twig',
             'dashboard'                => 'SonataAdminBundle:Core:dashboard.html.twig',
             'list'                     => 'SonataAdminBundle:CRUD:list.html.twig',
+            'filter'                   => 'SonataAdminBundle:Form:filter_admin_fields.html.twig',
             'show'                     => 'SonataAdminBundle:CRUD:show.html.twig',
             'edit'                     => 'SonataAdminBundle:CRUD:edit.html.twig',
             'history'                  => 'SonataAdminBundle:CRUD:history.html.twig',

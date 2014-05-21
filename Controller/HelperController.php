@@ -181,6 +181,10 @@ class HelperController
             $admin->setUniqid($uniqid);
         }
 
+        if (!$objectId){
+            $objectId = null;
+        }
+
         $object = $admin->getObject($objectId);
 
         if (!$object && 'html' == $request->get('_format')) {

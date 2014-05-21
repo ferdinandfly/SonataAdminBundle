@@ -12,6 +12,8 @@
 namespace Sonata\AdminBundle\Admin;
 
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\AdminBundle\Route\RoutesCache;
+use Sonata\CoreBundle\Model\Metadata;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -451,6 +453,8 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
      */
     protected $securityInformation = array();
 
+    protected $cacheIsGranted = array();
+
     /**
      * {@inheritdoc}
      */
@@ -471,16 +475,6 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
      * {@inheritdoc}
      */
     protected function configureDatagridFilters(DatagridMapper $filter)
-    {
-
-    }
-
-    /**
-     * @deprecated removed with Symfony 2.2
-     *
-     * {@inheritdoc}
-     */
-    protected function configureShowField(ShowMapper $show)
     {
 
     }
@@ -721,7 +715,6 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
         $this->show = new FieldDescriptionCollection();
         $mapper = new ShowMapper($this->showBuilder, $this->show, $this);
 
-        $this->configureShowField($mapper); // deprecated, use configureShowFields instead
         $this->configureShowFields($mapper);
 
         foreach ($this->getExtensions() as $extension) {
@@ -1155,7 +1148,7 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
      *
      * @return void
      */
-    public function buildRoutes()
+    private function buildRoutes()
     {
         if ($this->loaded['routes']) {
             return;
@@ -1180,38 +1173,17 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getRoute($name)
-    {
-        $this->buildRoutes();
-
-        if (!$this->routes->has($name)) {
-            return false;
-        }
-
-        return $this->routes->get($name);
-    }
-
-    /**
      * @param string $name
      *
      * @return bool
      */
     public function hasRoute($name)
     {
-        $this->buildRoutes();
-
-        if (
-            ! $this->isChild()
-            && strpos($name, '.') !== false
-            && strpos($name, $this->getBaseCodeRoute() . '|') !== 0
-            && strpos($name, $this->getBaseCodeRoute() . '.') !== 0
-        ) {
-            $name = $this->getCode() . '|' . $name;
+        if (!$this->routeGenerator) {
+            throw new \RuntimeException('RouteGenerator cannot be null');
         }
 
-        return $this->routes->has($name);
+        return $this->routeGenerator->hasAdminRoute($this, $name);
     }
 
     /**
@@ -2078,6 +2050,11 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
 
         if (!$menu) {
             $menu = $this->menuFactory->createItem('root');
+
+            $menu = $menu->addChild(
+                $this->trans($this->getLabelTranslatorStrategy()->getLabel('dashboard', 'breadcrumb', 'link'), array(), 'SonataAdminBundle'),
+                array('uri' => $this->routeGenerator->generate('sonata_admin_dashboard'))
+            );
         }
 
         $menu = $menu->addChild(
@@ -2499,7 +2476,13 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
      */
     public function isGranted($name, $object = null)
     {
-        return $this->securityHandler->isGranted($this, $name, $object ?: $this);
+        $key = md5(json_encode($name) . ($object ? '/'.spl_object_hash($object) : ''));
+
+        if (!array_key_exists($key, $this->cacheIsGranted)) {
+            $this->cacheIsGranted[$key] = $this->securityHandler->isGranted($this, $name, $object ?: $this);
+        }
+
+        return $this->cacheIsGranted[$key];
     }
 
     /**
@@ -2720,5 +2703,13 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
     public function isAclEnabled()
     {
         return $this->getSecurityHandler() instanceof AclSecurityHandlerInterface;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectMetadata($object)
+    {
+        return new Metadata($this->toString($object));
     }
 }

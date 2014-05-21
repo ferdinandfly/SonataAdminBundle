@@ -59,8 +59,10 @@ Full Configuration Options
                 html5_validate:                         true      # use html5 validation
                 confirm_exit:                           true      # enabled confirmation when quitting with unsaved changes
                 use_select2:                            true      # enable select2
+                use_icheck:                             true      # enable iCheck
                 pager_links:                            ~         # pager max links to display
-                dropdown_number_groups_per_colums:          2         # max items per column in dropdown menu (add button in top nav)
+                dropdown_number_groups_per_colums:      2         # max items per column in dropdown menu (add button in top nav)
+                title_mode:           'both'                      # 'both', 'single_text' or 'single_image'
             dashboard:
                 groups:
 
@@ -101,6 +103,7 @@ Full Configuration Options
                 dashboard:            SonataAdminBundle:Core:dashboard.html.twig
                 search:               SonataAdminBundle:Core:search.html.twig
                 list:                 SonataAdminBundle:CRUD:list.html.twig
+                filter:               SonataAdminBundle:Form:filter_admin_fields.html.twig
                 show:                 SonataAdminBundle:CRUD:show.html.twig
                 edit:                 SonataAdminBundle:CRUD:edit.html.twig
                 preview:              SonataAdminBundle:CRUD:preview.html.twig
@@ -119,6 +122,35 @@ Full Configuration Options
                 base_list_field:      SonataAdminBundle:CRUD:base_list_field.html.twig
                 pager_links:          SonataAdminBundle:Pager:links.html.twig
                 pager_results:        SonataAdminBundle:Pager:results.html.twig
+
+            assets:
+                stylesheets:
+
+                    # Defaults:
+                    - bundles/sonataadmin/admin-lte/css/bootstrap.min.css
+                    - bundles/sonataadmin/admin-lte/css/font-awesome.min.css
+                    - bundles/sonataadmin/admin-lte/css/ionicons.min.css
+                    - bundles/sonataadmin/admin-lte/css/AdminLTE.css
+                    - bundles/sonatajquery/themes/flick/jquery-ui-1.10.4.custom.css
+                    - bundles/sonataadmin/select2/select2.css
+                    - bundles/sonataadmin/select2/select2-bootstrap.css
+                    - bundles/sonataadmin/bootstrap3-editable/bootstrap3-editable/css/bootstrap-editable.css
+                    - bundles/sonataadmin/css/styles.css
+                    - bundles/sonataadmin/css/layout.css
+                javascripts:
+
+                    # Defaults:
+                    - bundles/sonatajquery/jquery-1.10.2.js
+                    - bundles/sonatajquery/jquery-ui-1.10.4.js
+                    - bundles/sonatajquery/jquery-ui-i18n.js
+                    - bundles/sonataadmin/jquery/jquery.form.js
+                    - bundles/sonataadmin/jquery/jquery.confirmExit.js
+                    - bundles/sonataadmin/admin-lte/js/bootstrap.min.js
+                    - bundles/sonataadmin/bootstrap3-editable/bootstrap3-editable/js/bootstrap-editable.min.js
+                    - bundles/sonataadmin/select2/select2.min.js
+                    - bundles/sonataadmin/App.js
+                    - bundles/sonataadmin/Admin.js
+
             extensions:
 
                 # Prototype

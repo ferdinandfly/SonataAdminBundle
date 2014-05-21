@@ -26,6 +26,7 @@ use Sonata\AdminBundle\Route\RouteGeneratorInterface;
 use Knp\Menu\FactoryInterface as MenuFactoryInterface;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 
+use Sonata\CoreBundle\Model\Metadata;
 use Symfony\Component\Validator\ValidatorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -769,15 +770,6 @@ interface AdminInterface
     public function createObjectSecurity($object);
 
     /**
-     * Returns the url defined by the $name
-     *
-     * @param string $name
-     *
-     * @return \Symfony\Component\Routing\Route
-     */
-    public function getRoute($name);
-
-    /**
      * @return AdminInterface
      */
     public function getParent();
@@ -1005,4 +997,11 @@ interface AdminInterface
      * @return \Knp\Menu\ItemInterface|boolean
      */
     public function buildTabMenu($action, AdminInterface $childAdmin = null);
+
+    /**
+     * @param $object
+     *
+     * @return Metadata
+     */
+    public function getObjectMetadata($object);
 }
